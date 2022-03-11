@@ -1,5 +1,11 @@
 ## Обработка датасета в Spark
 
+Решение залить в calculations/apache_spark
+Должны быть:
+- файл с кодом
+- docker-compose для запуска Spark
+- readme с инструкцией по запуску
+
 Скачайте с kaggle.com [датасет с информацией о мороженом](https://www.kaggle.com/tysonpo/ice-cream-dataset).
 В датасете с мороженым есть пять папок: bj, breyers, hd, talenti, combined. Первые четыре папки — с брендами мороженого, папка combined содержит информацию о нескольких брендах. Все папки имеют одинаковую структуру: images, products.csv, reviews.csv.
 
