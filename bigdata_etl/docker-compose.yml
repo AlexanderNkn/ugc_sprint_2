@@ -5,12 +5,10 @@ services:
     image: zookeeper:3.5
     container_name: zookeeper_clickhouse
     hostname: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2180
     volumes:
       - zookeeper_clickhouse_data:/data
-      - zookeeper_clickhouse_data:/datalog
-      - zookeeper_clickhouse_data:/logs
+      - zookeeper_clickhouse_datalog:/datalog
+      - zookeeper_clickhouse_logs:/logs
   clickhouse-node1:
     image: yandex/clickhouse-server:20.4
     container_name: clickhouse-node1
@@ -64,14 +62,15 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     volumes:
-      - zookeeper_kafka_data:/etc/zookeeper/secrets
+      - zookeeper_kafka_secrets:/etc/zookeeper/secrets
       - zookeeper_kafka_data:/var/lib/zookeeper/data
-      - zookeeper_kafka_data:/var/lib/zookeeper/log
+      - zookeeper_kafka_log:/var/lib/zookeeper/log
 
   broker:
     image: confluentinc/cp-server:7.0.1
     hostname: broker
     container_name: broker
+    restart: always
     depends_on:
       - zookeeper
     ports:
@@ -97,7 +96,7 @@ services:
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
     volumes:
-      - broker_kafka_data:/etc/kafka/secrets
+      - broker_kafka_secrets:/etc/kafka/secrets
       - broker_kafka_data:/var/lib/kafka/data
 
   schema-registry:
@@ -145,10 +144,10 @@ services:
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
       CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
     volumes:
-      - connect_kafka_data:/etc/kafka-connect/jars
-      - connect_kafka_data:/etc/kafka-connect/secrets
-      - connect_kafka_data:/etc/kafka/secrets
-      - connect_kafka_data:/var/lib/kafka/data
+      - connect_kafka_jars:/etc/kafka-connect/jars
+      - connect_kafka_secrets:/etc/kafka-connect/secrets
+      - kafka_secrets:/etc/kafka/secrets
+      - kafka_data:/var/lib/kafka/data
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.0.1
@@ -244,11 +243,19 @@ services:
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
 volumes:
   zookeeper_clickhouse_data:
+  zookeeper_clickhouse_datalog:
+  zookeeper_clickhouse_logs:
   clickhouse_node1:
   clickhouse_node2:
   clickhouse_node3:
   clickhouse_node4:
+  zookeeper_kafka_secrets:
   zookeeper_kafka_data:
+  zookeeper_kafka_log:
+  broker_kafka_secrets:
   broker_kafka_data:
   registry_kafka_data:
-  connect_kafka_data:
+  connect_kafka_jars:
+  connect_kafka_secrets:
+  kafka_secrets:
+  kafka_data:
