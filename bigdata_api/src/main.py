@@ -1,0 +1,53 @@
+import logging
+
+import asyncio
+import uvicorn
+from aiokafka import AIOKafkaProducer
+from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
+
+from api.v1 import producer
+from core import config
+from core.logger import LOGGING
+from db import kafka_db
+
+logging.getLogger('backoff').addHandler(logging.StreamHandler())
+
+app = FastAPI(
+    title=config.PROJECT_NAME,
+    docs_url='/bigdata-api/openapi',
+    redoc_url='/bigdata-api/redoc',
+    openapi_url='/bigdata-api/openapi.json',
+    default_response_class=ORJSONResponse,
+    description='Collect information about movies views',
+    version='1.0.0'
+)
+
+loop = asyncio.get_event_loop()
+kafka_db.producer = AIOKafkaProducer(
+    loop=loop, client_id=config.PROJECT_NAME, bootstrap_servers=config.KAFKA_INSTANCE
+)
+
+
+@app.on_event('startup')
+async def startup():
+    await kafka_db.producer.start()
+
+
+@app.on_event('shutdown')
+async def shutdown():
+    await kafka_db.producer.stop()
+
+
+app.include_router(producer.router, prefix='/bigdata-api/v1/producer', tags=['producer'])
+
+
+if __name__ == '__main__':
+
+    uvicorn.run(
+        'main:app',
+        host='0.0.0.0',
+        port=8001,
+        log_config=LOGGING,
+        log_level=logging.DEBUG,
+    )
