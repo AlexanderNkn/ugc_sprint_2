@@ -56,3 +56,4 @@ doc.html
 
 # mypy
 .mypy_cache
+.ipynb_checkpoints
