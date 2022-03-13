@@ -1,10 +1,22 @@
 version: '3.5'
 
 services:
+  bigdata_etl:
+    container_name: bigdata_etl
+    image: bigdata_etl:v1.0
+    build:
+      context: ./bigdata_etl
+      dockerfile: Dockerfile
+    depends_on:
+      - clickhouse-node1
+      - clickhouse-node2
+      - clickhouse-node3
+      - clickhouse-node4
+      - broker
   zookeeper_clickhouse:
     image: zookeeper:3.5
     container_name: zookeeper_clickhouse
-    hostname: zookeeper
+    hostname: zookeeper_clickhouse
     volumes:
       - zookeeper_clickhouse_data:/data
       - zookeeper_clickhouse_datalog:/datalog
@@ -17,7 +29,7 @@ services:
       - "8123:8123"
       - "9000:9000"
     volumes:
-      - ./clickhouse_config/node1:/etc/clickhouse-server
+      - ./bigdata_etl/clickhouse_config/node1:/etc/clickhouse-server
       - clickhouse_node1:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse
@@ -27,7 +39,7 @@ services:
     container_name: clickhouse-node2
     hostname: clickhouse-node2
     volumes:
-      - ./clickhouse_config/node2:/etc/clickhouse-server
+      - ./bigdata_etl/clickhouse_config/node2:/etc/clickhouse-server
       - clickhouse_node2:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse
@@ -37,7 +49,7 @@ services:
     container_name: clickhouse-node3
     hostname: clickhouse-node3
     volumes:
-      - ./clickhouse_config/node3:/etc/clickhouse-server
+      - ./bigdata_etl/clickhouse_config/node3:/etc/clickhouse-server
       - clickhouse_node3:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse
@@ -47,7 +59,7 @@ services:
     container_name: clickhouse-node4
     hostname: clickhouse-node4
     volumes:
-      - ./clickhouse_config/node4:/etc/clickhouse-server
+      - ./bigdata_etl/clickhouse_config/node4:/etc/clickhouse-server
       - clickhouse_node4:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse

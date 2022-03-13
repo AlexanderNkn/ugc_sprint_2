@@ -56,3 +56,7 @@ doc.html
 
 # mypy
 .mypy_cache
+
+# scripts for local testing etl
+kafka_test.py
+clickhouse_test.ipynb

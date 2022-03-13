@@ -83,7 +83,7 @@ def create_materialized_view(client):
 
 
 if __name__ == '__main__':
-    client = Client(host='localhost', port=9000)
+    client = Client(host='clickhouse-node1', port=9000)
     create_database(client)
     create_source_tables(client)
     create_target_tables(client)
