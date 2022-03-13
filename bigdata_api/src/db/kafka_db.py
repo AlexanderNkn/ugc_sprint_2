@@ -16,7 +16,7 @@ class KafkaProducer:
 
     @backoff.on_exception(backoff.expo, aiokafka.errors.KafkaError, max_time=10)
     async def send(self, topicname, msg, *args, **kwargs):
-        return await self.kafka.send(topicname, msg.encode("ascii"), *args, **kwargs)
+        return await self.kafka.send_and_wait(topicname, msg.encode("ascii"), *args, **kwargs)
 
 
 class KafkaConsumer:

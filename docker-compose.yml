@@ -1,6 +1,18 @@
 version: '3.5'
 
 services:
+  bigdata-api:
+    container_name: bigdata_api
+    image: bigdata_api:v1.0
+    build:
+      context: .
+      dockerfile: bigdata_api/docker/Dockerfile
+    env_file:
+      - bigdata_api/envs/.bigdata_api.env
+    depends_on:
+      - broker
+    ports:
+      - 8001:8001
   bigdata_etl:
     container_name: bigdata_etl
     image: bigdata_etl:v1.0

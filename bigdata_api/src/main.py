@@ -1,6 +1,5 @@
 import logging
 
-import asyncio
 import uvicorn
 from aiokafka import AIOKafkaProducer
 from fastapi import FastAPI
@@ -10,6 +9,7 @@ from api.v1 import producer
 from core import config
 from core.logger import LOGGING
 from db import kafka_db
+
 
 logging.getLogger('backoff').addHandler(logging.StreamHandler())
 
@@ -23,14 +23,12 @@ app = FastAPI(
     version='1.0.0'
 )
 
-loop = asyncio.get_event_loop()
-kafka_db.producer = AIOKafkaProducer(
-    loop=loop, client_id=config.PROJECT_NAME, bootstrap_servers=config.KAFKA_INSTANCE
-)
-
 
 @app.on_event('startup')
 async def startup():
+    kafka_db.producer = AIOKafkaProducer(
+        client_id=config.PROJECT_NAME, bootstrap_servers=config.KAFKA_INSTANCE
+    )
     await kafka_db.producer.start()
 
 
