@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Header, HTTPException, Request
+from fastapi import APIRouter, Depends, Header
 
 from dependencies.authentication import get_token, make_request
 from models.producer import ProducerMessage, ProducerResponse
@@ -14,15 +14,15 @@ async def check_views_statistics_permission(token=get_token(), x_request_id=Head
 @router.post(
     '/{topicname}',
     response_model=ProducerResponse,
-    summary='Send massage to kafka',
-    description='Send massage to kafka',
-    response_description='Topicname and message id',
+    summary='Send message to kafka',
+    description='Send message to kafka',
+    response_description='Topic name and message id',
 )
 async def kafka_produce(
-        msg: ProducerMessage,
-        topicname: str,
-        producer_service: ProducerService = Depends(get_producer_service),
-        allowed: bool = Depends(check_views_statistics_permission),
+    msg: ProducerMessage,
+    topicname: str,
+    producer_service: ProducerService = Depends(get_producer_service),
+    allowed: bool = Depends(check_views_statistics_permission),
 ) -> ProducerResponse:
     await producer_service.send(topicname, msg)
     response = ProducerResponse(
