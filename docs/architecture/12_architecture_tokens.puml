@@ -51,7 +51,7 @@ else Токен валиден
     end
 end
 
-== Запрос данных о фильмах ==
+== Использование токена (пример: запрос данных о фильмах) ==
 
 WebClient -> Movies: /film (передаем access_token)
 Movies -> AuthService: /check-permission (film)
