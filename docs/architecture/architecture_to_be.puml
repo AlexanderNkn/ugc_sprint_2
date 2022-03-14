@@ -3,6 +3,7 @@ skinparam componentStyle uml1
 
 actor Менеджер as Manager
 actor Клиент as Client
+actor Аналитик as BI
 
 package Authorization {
     component Auth
@@ -34,6 +35,17 @@ package Movie-search {
     database Redis as redis1
 }
 
+rectangle Планируемая_архитектура #LightBlue{
+    package UGC {
+        component BigDataBackend as bigdata
+        database Kafka
+        database ClickHouse as click
+        cloud {
+            component ETLprocess as etl2
+        }
+    }
+}
+
 Manager -[hidden]-> Client
 router1 -[hidden]-> router2
 fastapi -d-> Auth: Проверка разрешений\n пользователя
@@ -50,5 +62,11 @@ fastapi -> ElasticSearch
 router2 -> Auth: Регистрация/логин\n/логаут/изменение данных
 Auth -d-> postgres2
 Auth -> redis2
+router2 -d-> bigdata: Временные метки\n фильмов
+router2 -d-> bigdata: Отзывы, комментарии\n пользователя
+bigdata -d-> Kafka
+Kafka -d-> etl2
+etl2 -> click
+BI -> click: Анализ\n предпочтений\n пользователя
 
 @enduml 
