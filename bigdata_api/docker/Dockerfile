@@ -14,6 +14,6 @@ RUN apt update && apt install -y netcat \
 
 ENTRYPOINT ["/usr/src/code/kafka_waiter.sh"]
 
-COPY ["bigdata_api/src", "./"]
+COPY ["bigdata_api", "./bigdata_api"]
 
 CMD ["gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:8001"]
