@@ -1,0 +1,67 @@
+@startuml
+== Получение токена ==
+
+participant "Web client" as WebClient
+participant "Auth service" as AuthService
+participant "Auth db" as AuthDB
+participant "Movies service" as Movies
+
+WebClient -> AuthService: /login (передаем логин и пароль)
+AuthService -> AuthDB: Запрос данных пользователя
+AuthDB --> AuthService: Данные пользователя или None
+AuthService -> AuthService: Проверка пароля
+alt Пароль пустой
+    WebClient <-- AuthService : Вернуть ошибку BAD_REQUEST (400)
+else Пароль некорректен
+    WebClient <-- AuthService : Вернуть ошибку UNAUTHORIZED (401)
+else Пароль корректен
+    AuthService -> AuthDB: Запрос разрешений пользователя
+    AuthDB --> AuthService: Список permissions для пользователя
+    AuthService -> AuthService: Сгенерировать токены
+    AuthService --> WebClient: access_token, refresh_token
+end
+
+== Отзыв токена ==
+
+WebClient -> AuthService: /logout (передаем access_token)
+AuthService -> AuthService: Добавить access_token в черный список
+AuthService --> WebClient: access_token, refresh_token
+
+== Использование токена (пример: метод get_personal_data) ==
+
+WebClient -> AuthService: /get_personal_data (передаем access_token)
+AuthService -> AuthService: Проверка времени жизни токена
+AuthService -> AuthService: Проверка токена в черном списке
+alt Токен истек
+    AuthService --> WebClient: Возврат ошибки UNAUTHORIZED (401)
+    WebClient -> AuthService: /refresh_token (передаем refresh_token)
+    AuthService -> AuthService: Проверка токена
+    AuthService -> AuthService: Сгенерировать токены (на основании refresh_token)
+    AuthService --> WebClient: access_token, refresh_token
+else Токен отозван
+    AuthService --> WebClient: Возврат ошибки UNAUTHORIZED (401)
+else Токен валиден
+    AuthService -> AuthService: Получение разрешений пользователя из токена
+    alt Есть разрешение на эндпоинт
+        AuthService -> AuthDB: Запрос данных пользователя
+        AuthDB --> AuthService: Данные пользователя
+        AuthService --> WebClient: Данные пользователя
+    else Нет разрешения на эндпоинт
+        AuthService --> WebClient: Возврат ошибки UNAUTHORIZED (401)
+    end
+end
+
+== Запрос данных о фильмах ==
+
+WebClient -> Movies: /film (передаем access_token)
+Movies -> AuthService: /check-permission (film)
+AuthService -> AuthService: Выполнить проверку по токену
+AuthService --> Movies: Вернуть результат проверки
+alt Есть разрешение на эндпоинт
+    Movies -> Movies: Получить список фильмов
+    Movies --> WebClient: Данные о фильмах
+else Нет разрешения на эндпоинт
+    Movies --> WebClient: Возврат ошибки UNAUTHORIZED (401)
+end
+
+@enduml
