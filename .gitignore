@@ -60,3 +60,6 @@ doc.html
 # scripts for local testing etl
 kafka_test.py
 clickhouse_test.ipynb
+
+# jupyter files
+.ipynb_checkpoints
