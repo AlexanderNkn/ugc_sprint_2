@@ -35,6 +35,12 @@ https://github.com/AlexanderNkn/ugc_sprint_1
     http://localhost/bigdata-api/openapi.json
     ```
 
+## Тесты 
+- Запуск тестов в контейнере через pytest
+    ```
+    docker-compose exec bigdata-api pytest
+    ```
+
 ## Использование
 ### отправка данных в Kafka
 - 
@@ -53,7 +59,7 @@ https://github.com/AlexanderNkn/ugc_sprint_1
     201 Created
 
     {
-        "message": "acknowledge",
+        "message": "acknowledged",
         "status": "success"
     }
     ```

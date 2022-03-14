@@ -28,5 +28,5 @@ async def kafka_produce(
     await producer_service.send(topicname, msg)
     return ProducerResponse(
         status='success',
-        message='acknowledge',
+        message='acknowledged',
     )
