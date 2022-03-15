@@ -95,8 +95,9 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    tmpfs:
+      - /etc/zookeeper/secrets
     volumes:
-      - zookeeper_kafka_secrets:/etc/zookeeper/secrets
       - zookeeper_kafka_data:/var/lib/zookeeper/data
       - zookeeper_kafka_log:/var/lib/zookeeper/log
 
@@ -129,8 +130,9 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+    tmpfs:
+      - /etc/kafka/secrets
     volumes:
-      - broker_kafka_secrets:/etc/kafka/secrets
       - broker_kafka_data:/var/lib/kafka/data
 
   schema-registry:
@@ -145,8 +147,8 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker:29092'
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
-    volumes:
-      - registry_kafka_data:/etc/schema-registry/secrets
+    tmpfs:
+      /etc/schema-registry/secrets
 
   connect:
     image: cnfldemos/cp-server-connect-datagen:0.5.0-6.2.0
@@ -177,10 +179,11 @@ services:
       CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
       CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
+    tmpfs:
+      - /etc/kafka-connect/jars
+      - /etc/kafka-connect/secrets
+      - /etc/kafka/secrets
     volumes:
-      - connect_kafka_jars:/etc/kafka-connect/jars
-      - connect_kafka_secrets:/etc/kafka-connect/secrets
-      - kafka_secrets:/etc/kafka/secrets
       - kafka_data:/var/lib/kafka/data
 
   control-center:
@@ -283,13 +286,7 @@ volumes:
   clickhouse_node2:
   clickhouse_node3:
   clickhouse_node4:
-  zookeeper_kafka_secrets:
   zookeeper_kafka_data:
   zookeeper_kafka_log:
-  broker_kafka_secrets:
   broker_kafka_data:
-  registry_kafka_data:
-  connect_kafka_jars:
-  connect_kafka_secrets:
-  kafka_secrets:
   kafka_data:
