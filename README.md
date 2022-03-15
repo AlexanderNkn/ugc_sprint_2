@@ -15,6 +15,7 @@ https://github.com/AlexanderNkn/ugc_sprint_1
 - переименуйте файл с переменными окружения для тестирования
     ```
     mv bigdata_api/envs/.bigdata_api.env.sample bigdata_api/envs/.bigdata_api.env
+    mv bigdata_etl/envs/.bigdata_etl.env.sample bigdata_etl/envs/.bigdata_etl.env
     ```
 - соберите образ
     ```
