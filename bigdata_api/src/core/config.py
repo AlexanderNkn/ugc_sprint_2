@@ -17,3 +17,5 @@ AUTH_HOST = os.getenv('AUTH_HOST', 'http://127.0.0.1')
 AUTH_PORT = int(os.getenv('AUTH_PORT', 80))
 AUTH_BASE_URL = os.getenv('AUTH_BASE_URL', '/auth-api/v1')
 ENABLE_AUTHORIZATION = int(os.getenv('ENABLE_AUTHORIZATION', 0))
+
+BIGDATASPI_PORT = int(os.getenv('BIGDATASPI_PORT', 8001))
