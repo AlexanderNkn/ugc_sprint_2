@@ -14,6 +14,6 @@ RUN apt update && apt install -y netcat \
 
 ENTRYPOINT ["/usr/src/code/kafka_clickhouse_waiter.sh"]
 
-COPY ["etl_kafka_clickhouse.py", "./"]
+COPY ["etl_kafka_clickhouse.py", "settings.py", "./"]
 
 CMD ["python3", "etl_kafka_clickhouse.py"]

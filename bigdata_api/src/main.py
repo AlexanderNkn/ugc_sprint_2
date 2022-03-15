@@ -1,5 +1,7 @@
 import logging
 
+import aiokafka.errors
+import backoff
 import uvicorn
 from aiokafka import AIOKafkaProducer
 from fastapi import FastAPI
@@ -9,7 +11,6 @@ from api.v1 import producer
 from core import config
 from core.logger import LOGGING
 from db import kafka_db
-
 
 logging.getLogger('backoff').addHandler(logging.StreamHandler())
 
@@ -25,6 +26,7 @@ app = FastAPI(
 
 
 @app.on_event('startup')
+@backoff.on_exception(backoff.expo, aiokafka.errors.KafkaError, max_time=120)
 async def startup():
     kafka_db.producer = AIOKafkaProducer(
         client_id=config.PROJECT_NAME, bootstrap_servers=config.KAFKA_INSTANCE
