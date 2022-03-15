@@ -2,8 +2,10 @@ from time import sleep
 
 from clickhouse_driver import Client
 
+from settings import CLICKHOUSE_HOST, CLICKHOUSE_PORT
 
-def create_database(client):
+
+def create_database(client: Client) -> None:
     client.execute(
         """
         CREATE DATABASE IF NOT EXISTS movies
@@ -13,7 +15,7 @@ def create_database(client):
     sleep(60)
 
 
-def create_source_tables(client):
+def create_source_tables(client: Client) -> None:
     """Fetch data from Kafka stream."""
     client.execute(
         """
@@ -29,7 +31,7 @@ def create_source_tables(client):
     )
 
 
-def create_target_tables(client):
+def create_target_tables(client: Client) -> None:
     """Store data in ClickHouse."""
     client.execute(
         """
@@ -60,7 +62,7 @@ def create_target_tables(client):
     )
 
 
-def create_materialized_view(client):
+def create_materialized_view(client: Client) -> None:
     """Transfer data from Kafka to ClickHouse"""
     client.execute(
         """
@@ -83,7 +85,7 @@ def create_materialized_view(client):
 
 
 if __name__ == '__main__':
-    client = Client(host='clickhouse-node1', port=9000)
+    client = Client(host=CLICKHOUSE_HOST, port=CLICKHOUSE_PORT)
     create_database(client)
     create_source_tables(client)
     create_target_tables(client)

@@ -27,6 +27,8 @@ services:
     build:
       context: ./bigdata_etl
       dockerfile: Dockerfile
+    env_file:
+      - bigdata_etl/envs/.bigdata_etl.env
     depends_on:
       - clickhouse-node1
       - clickhouse-node2
