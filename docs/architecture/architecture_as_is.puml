@@ -1,0 +1,54 @@
+"@startuml Current architecture"
+skinparam componentStyle uml1
+
+actor Менеджер as Manager
+actor Клиент as Client
+
+package Authorization {
+    component Auth
+    database Redis as redis2
+    database Postgres as postgres2
+}
+
+package Proxy-server {
+    rectangle nginx {
+        component router as router1
+        component router as router2
+    }
+}
+
+package Admin-panel {
+    component DjangoWebBackend as django
+    database Postgres as postgres1
+}
+
+package FullTextSearch {
+    cloud {
+        component ETLprocess as etl
+    }
+    database ElasticSearch
+}
+
+package Movie-search {
+    component FastapiWebBackend as fastapi
+    database Redis as redis1
+}
+
+Manager -[hidden]-> Client
+router1 -[hidden]-> router2
+fastapi -d-> Auth: Проверка разрешений\n пользователя
+Manager -> router1
+Client -l-> router2
+router1 -> django: Добавление/редактирование\n информации о фильме
+django -> postgres1
+postgres1 -r-> etl
+etl -d-> ElasticSearch
+router2 -l-> fastapi: Поиск по фильмам/актерам\n/жанрам
+router2 -l-> fastapi: Просмотр фильмов
+fastapi --> redis1
+fastapi -> ElasticSearch
+router2 -> Auth: Регистрация/логин\n/логаут/изменение данных
+Auth -d-> postgres2
+Auth -> redis2
+
+@enduml 

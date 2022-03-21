@@ -1,0 +1,5 @@
+import os
+
+
+CLICKHOUSE_HOST = os.getenv('CLICKHOUSE_HOST', '127.0.0.1')
+CLICKHOUSE_PORT = os.getenv('CLICKHOUSE_PORT', 9000)
