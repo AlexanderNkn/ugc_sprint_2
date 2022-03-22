@@ -1,4 +1,4 @@
-# Проектная работа 8 спринта
+# Проектная работа 9 спринта
 Задачи можно посмотреть в /tasks
 
 ## Ссылка на репозиторий с проектом:
@@ -15,7 +15,7 @@ https://github.com/AlexanderNkn/ugc_sprint_2
 - переименуйте файл с переменными окружения для тестирования
     ```
     mv bigdata_api/envs/.bigdata_api.env.sample bigdata_api/envs/.bigdata_api.env
-    mv bigdata_etl/envs/.bigdata_etl.env.sample bigdata_etl/envs/.bigdata_etl.env
+    mv kafka_clickhouse_etl/envs/.kafka_clickhouse_etl.env.sample kafka_clickhouse_etl/envs/.kafka_clickhouse_etl.env
     ```
 - соберите образ
     ```

@@ -1,2 +1,2 @@
 -r bigdata_api/requirements.txt
--r bigdata_etl/requirements.txt
+-r kafka_clickhouse_etl/requirements.txt

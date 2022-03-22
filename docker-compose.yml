@@ -21,14 +21,14 @@ services:
       - 80:80
     depends_on:
       - bigdata-api
-  bigdata_etl:
-    container_name: bigdata_etl
-    image: bigdata_etl:v1.0
+  kafka_clickhouse_etl:
+    container_name: kafka_clickhouse_etl
+    image: kafka_clickhouse_etl:v1.0
     build:
-      context: ./bigdata_etl
+      context: ./kafka_clickhouse_etl
       dockerfile: Dockerfile
     env_file:
-      - bigdata_etl/envs/.bigdata_etl.env
+      - kafka_clickhouse_etl/envs/.kafka_clickhouse_etl.env
     depends_on:
       - clickhouse-node1
       - clickhouse-node2
@@ -51,7 +51,7 @@ services:
       - "8123:8123"
       - "9000:9000"
     volumes:
-      - ./bigdata_etl/clickhouse_config/node1:/etc/clickhouse-server
+      - ./kafka_clickhouse_etl/clickhouse_config/node1:/etc/clickhouse-server
       - clickhouse_node1:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse
@@ -61,7 +61,7 @@ services:
     container_name: clickhouse-node2
     hostname: clickhouse-node2
     volumes:
-      - ./bigdata_etl/clickhouse_config/node2:/etc/clickhouse-server
+      - ./kafka_clickhouse_etl/clickhouse_config/node2:/etc/clickhouse-server
       - clickhouse_node2:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse
@@ -71,7 +71,7 @@ services:
     container_name: clickhouse-node3
     hostname: clickhouse-node3
     volumes:
-      - ./bigdata_etl/clickhouse_config/node3:/etc/clickhouse-server
+      - ./kafka_clickhouse_etl/clickhouse_config/node3:/etc/clickhouse-server
       - clickhouse_node3:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse
@@ -81,7 +81,7 @@ services:
     container_name: clickhouse-node4
     hostname: clickhouse-node4
     volumes:
-      - ./bigdata_etl/clickhouse_config/node4:/etc/clickhouse-server
+      - ./kafka_clickhouse_etl/clickhouse_config/node4:/etc/clickhouse-server
       - clickhouse_node4:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse
