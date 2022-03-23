@@ -1,7 +1,9 @@
 import logging
+import os
 
 import aiokafka.errors
 import backoff
+import sentry_sdk
 import uvicorn
 from aiokafka import AIOKafkaProducer
 from fastapi import FastAPI
@@ -11,8 +13,10 @@ from api.v1 import producer
 from core import config
 from core.logger import LOGGING
 from db import kafka_db
+from middleware import SentryErrorLogging
 
 logging.getLogger('backoff').addHandler(logging.StreamHandler())
+sentry_sdk.init(os.getenv('SENTRY_DSN'), traces_sample_rate=1.0)
 
 app = FastAPI(
     title=config.PROJECT_NAME,
@@ -23,6 +27,8 @@ app = FastAPI(
     description='Collect information about movies views',
     version='1.0.0'
 )
+
+app.add_middleware(SentryErrorLogging)
 
 
 @app.on_event('startup')
@@ -41,9 +47,7 @@ async def shutdown():
 
 app.include_router(producer.router, prefix='/bigdata-api/v1/producer', tags=['producer'])
 
-
 if __name__ == '__main__':
-
     uvicorn.run(
         'main:app',
         host='0.0.0.0',

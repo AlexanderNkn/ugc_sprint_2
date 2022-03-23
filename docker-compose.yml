@@ -107,7 +107,7 @@ services:
     container_name: broker
     restart: always
     depends_on:
-      - zookeeper
+      - zookeeper_kafka
     ports:
       - "9092:9092"
       - "9101:9101"
