@@ -2,11 +2,11 @@ FROM mongo:5.0.6
 
 WORKDIR /usr/src/code
 
-COPY ["initialize-container.sh", \
-    "sink-connector.json", "source-connector.json", \
-    "config-data.js", "config-replica.js", "./"]
+COPY ["initialize-container.sh", "./"]
 
 RUN apt update && apt install -y curl \
     && chmod +x /usr/src/code/initialize-container.sh
+
+COPY ["connectors", "configs", "./"]
 
 ENTRYPOINT ["/usr/src/code/initialize-container.sh"]

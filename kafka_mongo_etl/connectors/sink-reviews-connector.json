@@ -1,11 +1,11 @@
 {
-  "name": "mongo-sink",
+  "name": "sink-reviews-connector",
   "config": {
     "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
     "connection.uri": "mongodb://mongo1",
     "database": "user_content",
-    "collection": "movie_ugc",
-    "topics": "user_content.movie_likes",
+    "collection": "reviews",
+    "topics": "sink_reviews",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "value.converter.schemas.enable": "false",
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
