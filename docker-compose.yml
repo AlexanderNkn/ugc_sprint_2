@@ -301,6 +301,18 @@ services:
       - mongo1
     restart: "no"
 
+  kafka_mongo_etl:
+    container_name: kafka_mongo_etl
+    image: kafka_mongo_etl:v1.0
+    build:
+      context: kafka_mongo_etl
+      dockerfile: docker/Dockerfile-ETL
+    env_file:
+      - kafka_mongo_etl/envs/.kafka_mongo_etl.env
+    depends_on:
+      - mongo1
+    restart: always
+
 volumes:
   zookeeper_clickhouse_data:
   zookeeper_clickhouse_datalog:

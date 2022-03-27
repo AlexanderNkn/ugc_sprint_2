@@ -12,7 +12,6 @@ logger = logging.getLogger('etl_kafka_mongo')
 
 
 def aggregate_review_likes(db) -> None:
-    print(db.review_likes)
     db.review_likes.aggregate([
         {
             "$group": {
