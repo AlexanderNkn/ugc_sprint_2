@@ -88,21 +88,57 @@ https://github.com/AlexanderNkn/ugc_sprint_2
     
     1 rows in set. Elapsed: 0.003 sec.
     ```
+
+### получение сводной информации по лайкам и отзывам всех пользователей для конкретного фильма
+
+- Для просмотра данных, переданных из Kafka в Mongo подключитесь к первой ноде
+    ```
+    docker-compose exec mongo1 mongo
+    ```
+
+- введите поисковый запрос
+    ```
+    rs0:PRIMARY> db.movie_ugc.find().pretty()
+
+    {
+            "_id" : ObjectId("62407ba358cde5cffb686e6e"),
+            "movie_id" : "0fa418fb-e0c0-4175-9594-70f930fade78",
+            "dislikes" : 1,
+            "likes" : 3,
+            "reviews" : [
+                    {
+                            "review_id" : "7b73b496-39da-4050-b4e0-38d946fd7e96",
+                            "author_id" : "60f216f9-ed5f-4534-a425-c02101a5f4a1",
+                            "review" : "11111",
+                            "likes" : 2,
+                            "dislikes" : 0
+                    },
+                    {
+                            "review_id" : "ba9f92fc-ee7f-49d8-98b1-f1cd652ffeb4",
+                            "author_id" : "7cbff603-14c4-4f7b-bc52-8a263db153f2",
+                            "review" : "33333",
+                            "likes" : 0,
+                            "dislikes" : 2
+                    }
+            ]
+    }
+    ...
+    ```
+
 ## Архитектурные решения
 - описание диаграмм в формате plantUML представлено в docs/architecture/
 
 ### Планируемая работа
-![plan_architecture](docs/architecture/planning_architecture.png)
+![plan_architecture](docs/architecture/architecture_9_sprint.png)
 
 ### Аутентификация
 ![token_architecture](docs/architecture/architecture_tokens.png)
 ## Выбор аналитической базы данных
 Сравнивали Vertica и ClickHouse. На нашем наборе данных ClickHouse показала лучшие результаты
-
-Записано 55000 записей в Vetrica за 1.0577869415283203 
-Прочитано 55000 записей в Vetrica за 0.9722421169281006 
-Записано 55000 записей в ClickHouse за 0.23347997665405273 
-Прочитано 55000 записей в ClickHouse за 0.07249212265014648
+- Записано 55000 записей в Vetrica за 1.0577869415283203
+- Прочитано 55000 записей в Vetrica за 0.9722421169281006
+- Записано 55000 записей в ClickHouse за 0.23347997665405273
+- Прочитано 55000 записей в ClickHouse за 0.07249212265014648
 
 Скрипты находятся в calculations/choosing_storage
 Описание запуска проекта в [readme](calculations/choosing_storage/README.md)

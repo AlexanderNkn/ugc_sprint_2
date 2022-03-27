@@ -1,8 +1,9 @@
-"@startuml Current architecture"
+"@startuml Planning architecture"
 skinparam componentStyle uml1
 
 actor Менеджер as Manager
 actor Клиент as Client
+actor Аналитик as BI
 
 package Authorization {
     component Auth
@@ -34,6 +35,21 @@ package Movie-search {
     database Redis as redis1
 }
 
+rectangle Добавлено_в_9_спринте #LightBlue{
+    package UGC {
+        component BigDataBackend as bigdata
+        database Kafka
+        database ClickHouse as click
+        database MongoDB as mongo
+        cloud {
+            component KafkaClickETL as etl2
+        }
+        cloud {
+            component KafkaMongoETL as etl3
+        }
+    }
+}
+
 Manager -[hidden]-> Client
 router1 -[hidden]-> router2
 fastapi -d-> Auth: Проверка разрешений\n пользователя
@@ -50,5 +66,14 @@ fastapi -> ElasticSearch
 router2 -> Auth: Регистрация/логин\n/логаут/изменение данных
 Auth -d-> postgres2
 Auth -> redis2
+router2 -d-> bigdata: Временные метки\n фильмов
+router2 -d-> bigdata: Лайки, отзывы\n пользователя
+bigdata -d-> Kafka
+Kafka -d-> etl2: Временные\nметки
+etl2 -> click
+BI -> click: Анализ\n предпочтений\n пользователя
+Kafka -> etl3
+etl3 -u-> mongo: Лайки/\nотзывы
+mongo -> bigdata: Суммарные данные\nпо лайкам/отзывам
 
 @enduml 
