@@ -55,9 +55,9 @@ jobs:
         run: docker-compose -f docker-compose.ci.yml up -d --build
 
       - name: Run tests for bigdata_api
-        run: docker-compose exec bigdata-api pytest
+        run: docker-compose -f docker-compose.ci.yml exec bigdata-api pytest
 
-      - name: send telegram message on push
+      - name: Send telegram message on push
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
