@@ -26,7 +26,7 @@ jobs:
           pip install mypy
 
       - name: Lint with wemake-python-styleguide for python ${{ matrix.python-version }} version
-        uses: wemake-services/wemake-python-styleguide
+        uses: wemake-services/wemake-python-styleguide@0.16.1
 
       - name: Lint with mypy for python ${{ matrix.python-version }} version
         run: mypy -m bigdata_api
