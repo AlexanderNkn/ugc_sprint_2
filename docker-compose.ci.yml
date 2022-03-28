@@ -1,0 +1,80 @@
+version: '3.5'
+
+services:
+  bigdata-api:
+    container_name: bigdata_api
+    image: bigdata_api:v1.0
+    build:
+      context: .
+      dockerfile: bigdata_api/docker/Dockerfile
+    environment:
+      PROJECT_NAME: ${PROJECT_NAME}
+      KAFKA_DB: ${KAFKA_DB}
+      KAFKA_HOST: ${KAFKA_HOST}
+      KAFKA_PORT: ${KAFKA_PORT}
+      BIGDATASPI_HOST: ${BIGDATASPI_HOST}
+      BIGDATASPI_PORT: ${BIGDATASPI_PORT}
+      BASE_URL: ${BASE_URL}
+      AUTH_HOST: ${AUTH_HOST}
+      AUTH_PORT: ${AUTH_PORT}
+      AUTH_BASE_URL: ${AUTH_BASE_URL}
+      ENABLE_AUTHORIZATION: ${ENABLE_AUTHORIZATION}
+      KAFKA_HOST_TEST: ${KAFKA_HOST_TEST}
+      KAFKA_PORT_TEST: ${KAFKA_PORT_TEST}
+      PYTHONPATH: ${PYTHONPATH}
+    depends_on:
+      - broker
+
+  zookeeper_kafka:
+    image: confluentinc/cp-zookeeper:7.0.1
+    hostname: zookeeper
+    container_name: zookeeper_kafka
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    tmpfs:
+      - /etc/zookeeper/secrets
+    volumes:
+      - zookeeper_kafka_data:/var/lib/zookeeper/data
+      - zookeeper_kafka_log:/var/lib/zookeeper/log
+
+  broker:
+    image: confluentinc/cp-server:7.0.1
+    hostname: broker
+    container_name: broker
+    restart: always
+    depends_on:
+      - zookeeper_kafka
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+    tmpfs:
+      - /etc/kafka/secrets
+    volumes:
+      - broker_kafka_data:/var/lib/kafka/data
+
+volumes:
+  zookeeper_kafka_data:
+  zookeeper_kafka_log:
+  broker_kafka_data:

@@ -1,7 +1,7 @@
 import aiohttp
+import pybreaker
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-import pybreaker
 
 from core import config
 
@@ -27,6 +27,8 @@ async def make_request(permission: str, token: str, x_request_id: str):
                 'X-Request-Id': x_request_id,
             },
         ) as response:
-            data = await response.json()
-            if data['status'] == 'error' or (data['status'] == 'success' and data['has_permission'] is False):
-                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=data)
+            authentication_data = await response.json()
+            if authentication_data['status'] == 'error' or (
+                authentication_data['status'] == 'success' and authentication_data['has_permission'] is False
+            ):
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=authentication_data)

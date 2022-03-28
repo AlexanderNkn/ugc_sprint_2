@@ -1,9 +1,8 @@
 import logging
 
-import aiokafka.errors
+import aiokafka
 import backoff
 import uvicorn
-from aiokafka import AIOKafkaProducer
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
@@ -28,7 +27,7 @@ app = FastAPI(
 @app.on_event('startup')
 @backoff.on_exception(backoff.expo, aiokafka.errors.KafkaError, max_time=120)
 async def startup():
-    kafka_db.producer = AIOKafkaProducer(
+    kafka_db.producer = aiokafka.AIOKafkaProducer(
         client_id=config.PROJECT_NAME, bootstrap_servers=config.KAFKA_INSTANCE
     )
     await kafka_db.producer.start()

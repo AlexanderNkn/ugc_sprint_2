@@ -1,6 +1,6 @@
+from dependencies.authentication import get_token, make_request
 from fastapi import APIRouter, Depends, Header, status
 
-from dependencies.authentication import get_token, make_request
 from models.producer import ProducerMessage, ProducerResponse
 from services.producer import ProducerService, get_producer_service
 
