@@ -38,4 +38,4 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             ${{ github.actor }} created commit:
-            Commit message: ${{ github.event }}
+            Commit message: ${{ github.event.head_commit }}
