@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  test_with_linters:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -30,3 +30,12 @@ jobs:
 
       - name: Lint with mypy for python ${{ matrix.python-version }} version
         run: mypy -m bigdata_api
+
+      - name: send telegram message on push
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ${{ github.actor }} created commit:
+            Commit message: ${{ github.event.commits[0].message }}
