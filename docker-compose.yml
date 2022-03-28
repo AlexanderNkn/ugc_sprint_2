@@ -11,6 +11,12 @@ services:
       - bigdata_api/envs/.bigdata_api.env
     depends_on:
       - broker
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://127.0.0.1:5044
+        tag: bigdata-api
+
   nginx:
     container_name: nginx
     image: nginx:1.21.6
@@ -21,6 +27,12 @@ services:
       - 80:80
     depends_on:
       - bigdata-api
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://127.0.0.1:5044
+        tag: nginx
+
   bigdata_etl:
     container_name: bigdata_etl
     image: bigdata_etl:v1.0

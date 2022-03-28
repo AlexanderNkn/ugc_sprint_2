@@ -106,3 +106,9 @@ https://github.com/AlexanderNkn/ugc_sprint_2
 
 Скрипты находятся в calculations/choosing_storage
 Описание запуска проекта в [readme](calculations/choosing_storage/README.md)
+
+## ELK 
+Запуск 
+```
+docker-compose -f docker-compose.yml -f docker-compose.elk.yml up --build 
+```
