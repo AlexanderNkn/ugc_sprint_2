@@ -52,10 +52,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the stack
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up zookeeper_kafka broker bigdata-api -d --build
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d --build zookeeper_kafka broker bigdata-api
 
       - name: Run tests for bigdata_api
-        run: docker-compose exec -T bigdata-api pytest
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml exec -T bigdata-api pytest
 
       - name: Send telegram message on push
         uses: appleboy/telegram-action@master
