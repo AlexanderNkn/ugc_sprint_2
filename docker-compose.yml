@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: bigdata_api/docker/Dockerfile
     env_file:
-      - bigdata_api/envs/.bigdata_api.env
+      - bigdata_api/envs/.bigdata_api.env.sample
     depends_on:
       - broker
 
@@ -30,7 +30,7 @@ services:
       context: ./bigdata_etl
       dockerfile: Dockerfile
     env_file:
-      - bigdata_etl/envs/.bigdata_etl.env
+      - bigdata_etl/envs/.bigdata_etl.env.sample
     depends_on:
       - clickhouse-node1
       - clickhouse-node2
@@ -109,7 +109,7 @@ services:
     container_name: broker
     restart: always
     depends_on:
-      - zookeeper
+      - zookeeper_kafka
     ports:
       - "9092:9092"
       - "9101:9101"
