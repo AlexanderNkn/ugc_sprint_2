@@ -1,0 +1,9 @@
+version: '3.5'
+
+services:
+  bigdata-api:
+    env_file:
+      - bigdata_api/envs/.bigdata_api.env
+  bigdata_etl:
+    env_file:
+      - bigdata_etl/envs/.bigdata_etl.env
