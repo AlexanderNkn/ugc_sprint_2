@@ -10,9 +10,7 @@ from api.v1 import producer
 from core import config
 from core.logger import LOGGING
 from db import kafka_db
-from logger.logstash import setup_logstash
 
-logging.getLogger('backoff').addHandler(logging.StreamHandler())
 
 app = FastAPI(
     title=config.PROJECT_NAME,
@@ -31,7 +29,6 @@ async def startup():
     kafka_db.producer = aiokafka.AIOKafkaProducer(
         client_id=config.PROJECT_NAME, bootstrap_servers=config.KAFKA_INSTANCE
     )
-    setup_logstash()
     await kafka_db.producer.start()
 
 
