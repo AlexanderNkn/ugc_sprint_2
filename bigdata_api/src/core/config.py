@@ -22,3 +22,5 @@ BIGDATASPI_PORT = int(os.getenv('BIGDATASPI_PORT', 8001))
 
 LOGSTASH_HOST = os.getenv('LOGSTASH_HOST', 'http://127.0.0.1')
 LOGSTASH_PORT = int(os.getenv('LOGSTASH_PORT', 5044))
+
+SENTRY_DSN = os.getenv('SENTRY_DSN', '')

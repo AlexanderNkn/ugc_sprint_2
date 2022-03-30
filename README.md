@@ -110,6 +110,9 @@ https://github.com/AlexanderNkn/ugc_sprint_2
 ## Логирование
 
 ### Sentry
+В переменные окружения добавьте SENTRY_DSN с вашим значением dsn. Документация sentry https://docs.sentry.io/.
+- Пример ошибки (специально поставили деление на ноль в сервис bigdata_api)
+![sentry_log](docs/screenshots/sentry_log.png)
 
 ### ELK
 
