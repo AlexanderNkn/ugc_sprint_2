@@ -1,5 +1,5 @@
 import logging
-from logging import config
+from logging import config as base_config
 from time import sleep
 
 from pymongo import MongoClient
@@ -7,44 +7,43 @@ from pymongo import MongoClient
 from logging_config import LOGGING_CONFIG
 from settings import MONGO_HOST, MONGO_PORT
 
-config.dictConfig(LOGGING_CONFIG)
+base_config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger('etl_kafka_mongo')
 
 
 def aggregate_review_likes(db) -> None:
-    print(db.review_likes)
     db.review_likes.aggregate([
         {
-            "$group": {
-                "_id": {
-                    "review_id": "$review_id"
+            '$group': {
+                '_id': {
+                    'review_id': '$review_id'
                 },
-                "likes": {
-                    "$sum": {
-                        "$cond": {"if": {"$eq": ["$like", True]}, "then": 1, "else": 0 }
+                'likes': {
+                    '$sum': {
+                        '$cond': {'if': {'$eq': ['$like', True]}, 'then': 1, 'else': 0}
                     }
                 },
-                "dislikes": {
-                    "$sum": {
-                        "$cond": {"if": {"$eq": ["$like", False]}, "then": 1, "else": 0 }
+                'dislikes': {
+                    '$sum': {
+                        '$cond': {'if': {'$eq': ['$like', False]}, 'then': 1, 'else': 0}
                     }
                 }
             }
         },
         {
-            "$project": {
-                "_id": 0,
-                "review_id": "$_id.review_id",
-                "likes": 1,
-                "dislikes": 1
+            '$project': {
+                '_id': 0,
+                'review_id': '$_id.review_id',
+                'likes': 1,
+                'dislikes': 1
             }
         },
         {
-            "$merge": {
-                "into": "reviews",
-                "on": "review_id",
-                "whenMatched": "merge",
-                "whenNotMatched": "insert"
+            '$merge': {
+                'into': 'reviews',
+                'on': 'review_id',
+                'whenMatched': 'merge',
+                'whenNotMatched': 'insert'
             }
         }
     ])
@@ -53,36 +52,36 @@ def aggregate_review_likes(db) -> None:
 def aggregate_movie_likes(db) -> None:
     db.movie_likes.aggregate([
         {
-            "$group": {
-                "_id": {
-                    "movie_id": "$movie_id"
+            '$group': {
+                '_id': {
+                    'movie_id': '$movie_id'
                 },
-                "likes": {
-                    "$sum": {
-                        "$cond": {"if": {"$eq": ["$like", True]}, "then": 1, "else": 0 }
+                'likes': {
+                    '$sum': {
+                        '$cond': {'if': {'$eq': ['$like', True]}, 'then': 1, 'else': 0}
                     }
                 },
-                "dislikes": {
-                    "$sum": {
-                        "$cond": {"if": {"$eq": ["$like", False]}, "then": 1, "else": 0 }
+                'dislikes': {
+                    '$sum': {
+                        '$cond': {'if': {'$eq': ['$like', False]}, 'then': 1, 'else': 0}
                     }
                 }
             }
         },
         {
-            "$project": {
-                "_id": 0,
-                "movie_id": "$_id.movie_id",
-                "likes": 1,
-                "dislikes": 1
+            '$project': {
+                '_id': 0,
+                'movie_id': '$_id.movie_id',
+                'likes': 1,
+                'dislikes': 1
             }
         },
         {
-            "$merge": {
-                "into": "movie_ugc",
-                "on": "movie_id",
-                "whenMatched": "merge",
-                "whenNotMatched": "insert"
+            '$merge': {
+                'into': 'movie_ugc',
+                'on': 'movie_id',
+                'whenMatched': 'merge',
+                'whenNotMatched': 'insert'
             }
         }
     ])
@@ -91,34 +90,34 @@ def aggregate_movie_likes(db) -> None:
 def aggregate_movie_ugc_data(db) -> None:
     db.reviews.aggregate([
         {
-            "$group": {
-                "_id": {
-                    "movie_id": "$movie_id"
+            '$group': {
+                '_id': {
+                    'movie_id': '$movie_id'
                 },
-                "reviews": {
-                    "$push": {
-                        "review_id": "$review_id",
-                        "author_id": "$user_id",
-                        "review": "$review",
-                        "likes": "$likes",
-                        "dislikes": "$dislikes"
+                'reviews': {
+                    '$push': {
+                        'review_id': '$review_id',
+                        'author_id': '$user_id',
+                        'review': '$review',
+                        'likes': '$likes',
+                        'dislikes': '$dislikes'
                     }
                 }
             }
         },
         {
-            "$project": {
-                "_id": 0,
-                "movie_id": "$_id.movie_id",
-                "reviews": 1
+            '$project': {
+                '_id': 0,
+                'movie_id': '$_id.movie_id',
+                'reviews': 1
             }
         },
         {
-            "$merge": {
-                "into": "movie_ugc",
-                "on": "movie_id",
-                "whenMatched": "merge",
-                "whenNotMatched": "insert"
+            '$merge': {
+                'into': 'movie_ugc',
+                'on': 'movie_id',
+                'whenMatched': 'merge',
+                'whenNotMatched': 'insert'
             }
         }
     ])
@@ -132,7 +131,7 @@ if __name__ == '__main__':
             aggregate_review_likes(db)
             aggregate_movie_likes(db)
             aggregate_movie_ugc_data(db)
-        except:
+        except Exception:
             logger.exception('Something went wrong with Mongodb')
         # TODO add circuit breaker
         sleep(60)
