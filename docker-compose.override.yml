@@ -7,3 +7,6 @@ services:
   kafka_clickhouse_etl:
     env_file:
       - kafka_clickhouse_etl/envs/.kafka_clickhouse_etl.env
+  kafka_mongo_etl:
+    env_file:
+      - kafka_mongo_etl/envs/.kafka_mongo_etl.env

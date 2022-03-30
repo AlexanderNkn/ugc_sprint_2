@@ -308,7 +308,7 @@ services:
       context: kafka_mongo_etl
       dockerfile: docker/Dockerfile-ETL
     env_file:
-      - kafka_mongo_etl/envs/.kafka_mongo_etl.env
+      - kafka_mongo_etl/envs/.kafka_mongo_etl.env.sample
     depends_on:
       - mongo1
     restart: always
