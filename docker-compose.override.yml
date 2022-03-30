@@ -2,26 +2,11 @@ version: '3.5'
 
 services:
   bigdata-api:
-    container_name: bigdata_api
-    image: bigdata_api:v1.0
-    build:
-      context: .
-      dockerfile: bigdata_api/docker/Dockerfile
     env_file:
       - bigdata_api/envs/.bigdata_api.env
-    depends_on:
-      - broker
-  bigdata_etl:
-    container_name: bigdata_etl
-    image: bigdata_etl:v1.0
-    build:
-      context: ./bigdata_etl
-      dockerfile: Dockerfile
+  kafka_clickhouse_etl:
     env_file:
-      - bigdata_etl/envs/.bigdata_etl.env
-    depends_on:
-      - clickhouse-node1
-      - clickhouse-node2
-      - clickhouse-node3
-      - clickhouse-node4
-      - broker
+      - kafka_clickhouse_etl/envs/.kafka_clickhouse_etl.env
+  kafka_mongo_etl:
+    env_file:
+      - kafka_mongo_etl/envs/.kafka_mongo_etl.env

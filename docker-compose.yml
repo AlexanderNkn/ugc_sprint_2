@@ -23,15 +23,14 @@ services:
       - 80:80
     depends_on:
       - bigdata-api
-
-  bigdata_etl:
-    container_name: bigdata_etl
-    image: bigdata_etl:v1.0
+  kafka_clickhouse_etl:
+    container_name: kafka_clickhouse_etl
+    image: kafka_clickhouse_etl:v1.0
     build:
-      context: ./bigdata_etl
+      context: ./kafka_clickhouse_etl
       dockerfile: Dockerfile
     env_file:
-      - bigdata_etl/envs/.bigdata_etl.env.sample
+      - kafka_clickhouse_etl/envs/.kafka_clickhouse_etl.env.sample
     depends_on:
       - clickhouse-node1
       - clickhouse-node2
@@ -56,7 +55,7 @@ services:
       - "8123:8123"
       - "9000:9000"
     volumes:
-      - ./bigdata_etl/clickhouse_config/node1:/etc/clickhouse-server
+      - ./kafka_clickhouse_etl/clickhouse_config/node1:/etc/clickhouse-server
       - clickhouse_node1:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse
@@ -66,7 +65,7 @@ services:
     container_name: clickhouse-node2
     hostname: clickhouse-node2
     volumes:
-      - ./bigdata_etl/clickhouse_config/node2:/etc/clickhouse-server
+      - ./kafka_clickhouse_etl/clickhouse_config/node2:/etc/clickhouse-server
       - clickhouse_node2:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse
@@ -76,7 +75,7 @@ services:
     container_name: clickhouse-node3
     hostname: clickhouse-node3
     volumes:
-      - ./bigdata_etl/clickhouse_config/node3:/etc/clickhouse-server
+      - ./kafka_clickhouse_etl/clickhouse_config/node3:/etc/clickhouse-server
       - clickhouse_node3:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse
@@ -86,7 +85,7 @@ services:
     container_name: clickhouse-node4
     hostname: clickhouse-node4
     volumes:
-      - ./bigdata_etl/clickhouse_config/node4:/etc/clickhouse-server
+      - ./kafka_clickhouse_etl/clickhouse_config/node4:/etc/clickhouse-server
       - clickhouse_node4:/var/lib/clickhouse
     depends_on:
       - zookeeper_clickhouse
@@ -156,7 +155,10 @@ services:
       /etc/schema-registry/secrets
 
   connect:
-    image: cnfldemos/cp-server-connect-datagen:0.5.0-6.2.0
+    image: mongo-cp-server-connect-datagen:0.5.0-6.2.0
+    build:
+      context: .
+      dockerfile: kafka_mongo_etl/docker/Dockerfile-MongoConnect
     hostname: connect
     container_name: connect
     depends_on:
@@ -175,8 +177,10 @@ services:
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
-      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      # CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      # CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       # CLASSPATH required due to CC-2422
       CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-7.0.1.jar
@@ -268,6 +272,7 @@ services:
       STREAMS_BOOTSTRAP_SERVERS: broker:29092
       STREAMS_SCHEMA_REGISTRY_HOST: schema-registry
       STREAMS_SCHEMA_REGISTRY_PORT: 8081
+    restart: always
 
   rest-proxy:
     image: confluentinc/cp-kafka-rest:7.0.1
@@ -319,7 +324,35 @@ services:
       - elasticsearch
       - kibana
     links:
-      - logstash 
+      - logstash
+
+  mongo1:
+    image: mongo:5.0.6
+    container_name: mongo1
+    command: --replSet rs0
+    restart: always
+
+  mongo1-setup:
+    image: mongo1-setup:1.0
+    container_name: mongo1-setup
+    build:
+      context: kafka_mongo_etl
+      dockerfile: docker/Dockerfile-MongoSetup
+    depends_on:
+      - mongo1
+    restart: "no"
+
+  kafka_mongo_etl:
+    container_name: kafka_mongo_etl
+    image: kafka_mongo_etl:v1.0
+    build:
+      context: kafka_mongo_etl
+      dockerfile: docker/Dockerfile-ETL
+    env_file:
+      - kafka_mongo_etl/envs/.kafka_mongo_etl.env.sample
+    depends_on:
+      - mongo1
+    restart: always
 
 volumes:
   zookeeper_clickhouse_data:

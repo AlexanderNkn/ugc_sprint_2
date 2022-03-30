@@ -1,0 +1,18 @@
+{
+  "name": "sink-bookmarks-delete-connector",
+  "config": {
+    "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
+    "connection.uri": "mongodb://mongo1",
+    "database": "user_content",
+    "collection": "bookmarks",
+    "topics": "sink_bookmarks_delete",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "document.id.strategy": "com.mongodb.kafka.connect.sink.processor.id.strategy.PartialValueStrategy",
+    "document.id.strategy.partial.value.projection.list": "user_id, movie_id",
+    "document.id.strategy.partial.value.projection.type": "AllowList",
+    "writemodel.strategy": "com.mongodb.kafka.connect.sink.writemodel.strategy.DeleteOneBusinessKeyStrategy"
+  }
+}
