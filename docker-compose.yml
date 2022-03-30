@@ -314,7 +314,6 @@ services:
       - /tmp/logs/nginx:/var/log/nginx:ro
       - ./elk/configs/filebeat.yml:/usr/share/filebeat/filebeat.yml
     depends_on:
-      - app
       - nginx
       - logstash
       - elasticsearch
