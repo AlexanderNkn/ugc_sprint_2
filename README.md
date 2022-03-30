@@ -106,3 +106,20 @@ https://github.com/AlexanderNkn/ugc_sprint_2
 
 Скрипты находятся в calculations/choosing_storage
 Описание запуска проекта в [readme](calculations/choosing_storage/README.md)
+
+## Логирование
+
+### Sentry
+В переменные окружения добавьте SENTRY_DSN с вашим значением dsn. Документация sentry https://docs.sentry.io/.
+- Пример ошибки (специально поставили деление на ноль в сервис bigdata_api)
+![sentry_log](docs/screenshots/sentry_log.png)
+
+### ELK
+
+Логи через logstash собираются в elasticsearch. В проекте использовано 2 способа отправки:
+- из сервиса bigdata_api, написанного на fastapi, с использованием библиотеки  [python-logstash-async](https://python-logstash-async.readthedocs.io/en/stable/index.html)
+- из nginx через общий файл - сервис nginx записывает логи в файл, сервис filebeat читает и отправляет их в logstash.
+
+Просмотреть логи можно через сервис [kibana](https://www.elastic.co/kibana/) по адресу http://127.0.0.1:5601/. 
+- Пример логов в kibana
+![nginx_log](docs/screenshots/nginx_log.png)

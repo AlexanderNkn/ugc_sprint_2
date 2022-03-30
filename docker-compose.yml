@@ -11,16 +11,19 @@ services:
       - bigdata_api/envs/.bigdata_api.env.sample
     depends_on:
       - broker
+
   nginx:
     container_name: nginx
     image: nginx:1.21.6
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/configs:/etc/nginx/conf.d:ro
+      - /tmp/logs/nginx/:/var/log/nginx/
     ports:
       - 80:80
     depends_on:
       - bigdata-api
+
   bigdata_etl:
     container_name: bigdata_etl
     image: bigdata_etl:v1.0
@@ -35,6 +38,7 @@ services:
       - clickhouse-node3
       - clickhouse-node4
       - broker
+
   zookeeper_clickhouse:
     image: zookeeper:3.5
     container_name: zookeeper_clickhouse
@@ -43,6 +47,7 @@ services:
       - zookeeper_clickhouse_data:/data
       - zookeeper_clickhouse_datalog:/datalog
       - zookeeper_clickhouse_logs:/logs
+
   clickhouse-node1:
     image: yandex/clickhouse-server:21.8
     container_name: clickhouse-node1
@@ -278,6 +283,44 @@ services:
       KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.10.2
+    environment:
+      XPACK_MONITORING_ENABLED: "true" 
+      ES_HOST: "elasticsearch:9200"
+    volumes:
+      - ./elk/configs/logstash.conf:/config/logstash.conf:ro
+    command: logstash -f /config/logstash.conf
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    environment:
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      discovery.type: single-node
+    volumes:
+      - /tmp/esdata:/tmp/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.2
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.10.2
+    volumes:
+      - /tmp/logs/nginx:/var/log/nginx:ro
+      - ./elk/configs/filebeat.yml:/usr/share/filebeat/filebeat.yml
+    depends_on:
+      - nginx
+      - logstash
+      - elasticsearch
+      - kibana
+    links:
+      - logstash 
+
 volumes:
   zookeeper_clickhouse_data:
   zookeeper_clickhouse_datalog:

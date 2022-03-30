@@ -1,3 +1,6 @@
+from core.logging_filters import RequestIdFilter
+
+
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_DEFAULT_HANDLERS = ['console', ]
 
@@ -34,6 +37,18 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'stream': 'ext://sys.stdout',
         },
+        'logstash': {
+            'class': 'logstash_async.handler.AsynchronousLogstashHandler',
+            'level': 'DEBUG',
+            'formatter': 'verbose',
+            'args': '("%(host)s", %(port)s, %(database_path)s, "%(transport)s", %(enable)s)',
+            'transport': 'logstash_async.transport.UdpTransport',
+            'host': 'logstash',
+            'port': 5044,
+            'enable': True,
+            'database_path': None,
+            'filters': ['request_id']
+        }
     },
     'loggers': {
         '': {
@@ -44,10 +59,19 @@ LOGGING = {
             'level': 'INFO',
         },
         'uvicorn.access': {
-            'handlers': ['access'],
+            'handlers': ['access', 'logstash'],
             'level': 'INFO',
             'propagate': False,
         },
+        'logstash': {
+            'handlers': ['logstash'],
+            'propagate': True,
+        }
+    },
+    'filters': {
+        'request_id': {
+            '()': RequestIdFilter,
+        }
     },
     'root': {
         'level': 'INFO',

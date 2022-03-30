@@ -2,16 +2,19 @@ import logging
 
 import aiokafka
 import backoff
+import sentry_sdk
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
+from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
 from api.v1 import producer
 from core import config
 from core.logger import LOGGING
 from db import kafka_db
 
-logging.getLogger('backoff').addHandler(logging.StreamHandler())
+
+sentry_sdk.init(dsn=config.SENTRY_DSN)
 
 app = FastAPI(
     title=config.PROJECT_NAME,
@@ -22,6 +25,8 @@ app = FastAPI(
     description='Collect information about movies views',
     version='1.0.0'
 )
+
+app.add_middleware(SentryAsgiMiddleware)
 
 
 @app.on_event('startup')
