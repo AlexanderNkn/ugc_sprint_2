@@ -34,6 +34,17 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'stream': 'ext://sys.stdout',
         },
+        'logstash': {
+            'class': 'logstash_async.handler.AsynchronousLogstashHandler',
+            'level': 'DEBUG',
+            'formatter': 'verbose',
+            'args': '("%(host)s", %(port)s, %(database_path)s, "%(transport)s", %(enable)s)',
+            'transport': 'logstash_async.transport.UdpTransport',
+            'host': 'logstash',
+            'port': 5044,
+            'enable': True,
+            'database_path': None
+        }
     },
     'loggers': {
         '': {
@@ -44,10 +55,14 @@ LOGGING = {
             'level': 'INFO',
         },
         'uvicorn.access': {
-            'handlers': ['access'],
+            'handlers': ['access', 'logstash'],
             'level': 'INFO',
             'propagate': False,
         },
+        'logstash': {
+            'handlers': ['logstash'],
+            'propagate': True,
+        }
     },
     'root': {
         'level': 'INFO',
