@@ -1,9 +1,9 @@
 import uuid
 from datetime import datetime
 
-from .base import BaseModel
-
 from pydantic import StrictStr, validator
+
+from .base import BaseModel
 
 
 class ProducerMessage(BaseModel):
