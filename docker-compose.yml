@@ -28,7 +28,7 @@ services:
       context: ./kafka_clickhouse_etl
       dockerfile: Dockerfile
     env_file:
-      - kafka_clickhouse_etl/envs/.kafka_clickhouse_etl.env
+      - kafka_clickhouse_etl/envs/.kafka_clickhouse_etl.env.sample
     depends_on:
       - clickhouse-node1
       - clickhouse-node2
