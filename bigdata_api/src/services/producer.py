@@ -14,8 +14,7 @@ class ProducerService:
         self.producer = producer
 
     async def send(self, topicname: str, msg: ProducerMessage) -> ProducerResponse | None:
-        result = await self.producer.send(topicname, msg)
-        return result
+        return await self.producer.send(topicname, msg)
 
 
 @lru_cache()

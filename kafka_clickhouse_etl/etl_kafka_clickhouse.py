@@ -63,7 +63,7 @@ def create_target_tables(client: Client) -> None:
 
 
 def create_materialized_view(client: Client) -> None:
-    """Transfer data from Kafka to ClickHouse"""
+    """Transfer data from Kafka to ClickHouse."""
     client.execute(
         """
         CREATE MATERIALIZED VIEW IF NOT EXISTS movies.latest_view_consumer
