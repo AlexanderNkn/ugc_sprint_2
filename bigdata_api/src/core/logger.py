@@ -1,3 +1,6 @@
+from core.logging_filters import RequestIdFilter
+
+
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_DEFAULT_HANDLERS = ['console', ]
 
@@ -62,6 +65,11 @@ LOGGING = {
         'logstash': {
             'handlers': ['logstash'],
             'propagate': True,
+        }
+    },
+    'filters': {
+        'request_id': {
+            '()': RequestIdFilter,
         }
     },
     'root': {
