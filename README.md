@@ -36,8 +36,9 @@ https://github.com/AlexanderNkn/ugc_sprint_2
     http://localhost/bigdata-api/openapi.json
     ```
 
-## Тесты 
-- Запуск тестов в контейнере через pytest
+## Тесты
+- Запускаются автоматически при каждом PR
+- Запуск тестов вручную в контейнере через pytest
     ```
     docker-compose exec bigdata-api pytest
     ```
