@@ -4,6 +4,6 @@ services:
   bigdata-api:
     env_file:
       - bigdata_api/envs/.bigdata_api.env
-  bigdata_etl:
+  kafka_clickhouse_etl:
     env_file:
-      - bigdata_etl/envs/.bigdata_etl.env
+      - kafka_clickhouse_etl/envs/.kafka_clickhouse_etl.env
