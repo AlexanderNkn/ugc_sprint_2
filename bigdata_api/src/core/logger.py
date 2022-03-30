@@ -46,7 +46,8 @@ LOGGING = {
             'host': 'logstash',
             'port': 5044,
             'enable': True,
-            'database_path': None
+            'database_path': None,
+            'filters': ['request_id']
         }
     },
     'loggers': {
