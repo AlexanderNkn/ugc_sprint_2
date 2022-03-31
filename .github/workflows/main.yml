@@ -57,8 +57,6 @@ jobs:
           ZOOKEEPER_TICK_TIME: 2000
       broker:
         image: confluentinc/cp-server:7.0.1
-        depends_on:
-          - zookeeper_kafka
         env:
           KAFKA_BROKER_ID: 1
           KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
