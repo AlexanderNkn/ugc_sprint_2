@@ -11,6 +11,10 @@ async def check_views_statistics_permission(token=get_token(), x_request_id=Head
     await make_request(permission='views_statistic', token=token, x_request_id=x_request_id)
 
 
+# TODO in current implementation different topics will be validated by pydantic with
+# the same fields, hardcoded in ProducerMessage model. Custom router should be added to map
+# topicname with its model before processing with kafka_produce() callable. This approach
+# will allow to reuse this endpoint for different topicname-model combinations.
 @router.post(
     '/{topicname}',
     status_code=status.HTTP_201_CREATED,
