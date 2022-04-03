@@ -1,0 +1,53 @@
+start time: 2022-04-03T17:32:26
+Users count: 200000
+Movies count: 5000
+Reviews count: 15
+
+Indexes don't use
+bulk_size: 10000
+users max_bookmarks: 3
+movie_likes samples: 10000
+movie_reviews samples: 5000
+
+Time for generate collection:
+----------------------------------------------------------------------------------------------------
+Collection          	samples   	time(s)   	time_per_sample(ms)
+test_movie_likes    	     10000	    0.4163	   0.04163
+test_movie_reviews  	     10000	      1.08	     0.108
+test_user_bookmarks 	    199483	     4.731	   0.02372
+
+Time for aggregate operation (ms):
+Get movies ranking
+             time
+count  100.000000
+mean     6.481035
+std      0.254892
+min      5.916600
+25%      6.298050
+50%      6.476600
+75%      6.639300
+max      7.280700
+
+Get users likes
+             time
+count  100.000000
+mean     7.374472
+std      0.248120
+min      6.842000
+25%      7.233250
+50%      7.334600
+75%      7.477300
+max      8.148000
+
+Get users bookmarks
+             time
+count  100.000000
+mean    92.685768
+std      0.968191
+min     91.374900
+25%     92.016900
+50%     92.511400
+75%     93.129300
+max     98.081000
+
+finish time: 2022-04-03T17:32:44.198696

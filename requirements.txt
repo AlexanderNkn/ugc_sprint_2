@@ -1,2 +1,3 @@
 -r bigdata_api/requirements.txt
 -r bigdata_etl/requirements.txt
+-r calculations/choosing_storage_2/requirements.txt
