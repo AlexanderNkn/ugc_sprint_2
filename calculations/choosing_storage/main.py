@@ -19,6 +19,3 @@ if __name__ == '__main__':
             database.fill_table()
             sleep(5)  # ClickHouse не сразу подтягивает записанные данные
             database.select_from_table()
-
-
-

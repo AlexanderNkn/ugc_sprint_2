@@ -88,9 +88,12 @@ def measure_time(db):
     ioloop = asyncio.new_event_loop()
     asyncio.set_event_loop(ioloop)
     tasks = [
-        ioloop.create_task(generate_movie_likes(db, random_seed=random_seed, bulk_size=bulk_size, samples=movie_likes_samples)),
-        ioloop.create_task(generate_movie_reviews(db, random_seed=random_seed, bulk_size=bulk_size, samples=movie_reviews_samples)),
-        ioloop.create_task(generate_movie_bookmarks(db, random_seed=random_seed, bulk_size=bulk_size, max_bookmarks=users_max_bookmarks)),
+        ioloop.create_task(generate_movie_likes(db, random_seed=random_seed,
+                                                bulk_size=bulk_size, samples=movie_likes_samples)),
+        ioloop.create_task(generate_movie_reviews(db, random_seed=random_seed,
+                                                  bulk_size=bulk_size, samples=movie_reviews_samples)),
+        ioloop.create_task(generate_movie_bookmarks(db, random_seed=random_seed,
+                                                    bulk_size=bulk_size, max_bookmarks=users_max_bookmarks)),
     ]
     wait_tasks = asyncio.wait(tasks)
     ioloop.run_until_complete(wait_tasks)
@@ -129,4 +132,3 @@ if __name__ == '__main__':
 
     db = client.speed_test
     measure_time(db)
-

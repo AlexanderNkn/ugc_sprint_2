@@ -10,7 +10,7 @@ class Vetrica:
 
     def create_table(self):
         self.cursor.execute("""
-        CREATE TABLE IF NOT EXISTS views 
+        CREATE TABLE IF NOT EXISTS views
             (id IDENTITY,
             user_id INTEGER NOT NULL,
             movie_id VARCHAR(256) NOT NULL,

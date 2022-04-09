@@ -342,7 +342,7 @@ def measure_time(db, use_indexes):
         times = aggregate_bookmarks(db, random_seed=random_seed, test_count=test_count)
         log_aggregate_time(log_file, 'Get users bookmarks', times)
 
-        log_file.write(f'finish time: ' + datetime.datetime.now().isoformat() + '\n')
+        log_file.write('finish time: ' + datetime.datetime.now().isoformat() + '\n')
 
     remove_test_collections(db)
 
